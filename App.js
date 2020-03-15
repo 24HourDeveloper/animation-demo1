@@ -1,15 +1,42 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Image, View , Animated, Button} from 'react-native'
+import { StyleSheet, Image, View , Animated, Button, Dimensions} from 'react-native'
+import {AppLoading} from 'expo'
+import {Asset} from 'expo-asset'
+
 import LogInForm from './components/LoginForm'
+
+
+const {height, width} = Dimensions.get('window');
+
+const cacheImages = (images) => {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
 
 export default function App() {
   const [fadeOut] = useState(new Animated.Value(1))
   const [riseUp] = useState(new Animated.Value(-200))
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(()=>{
 
-  },[fadeOut])
+  },[])
 
+  const _loadAssetsAsync = async() => {
+    const imageAssets = cacheImages([
+      require('./assets/family-bg.png'),
+    ]);
+
+    await Promise.all([...imageAssets]);
+  }
+
+
+  /*Animation functions start here  */
   const fadeOutButton = () =>{
     Animated.parallel([
       Animated.timing(fadeOut,{
@@ -25,26 +52,42 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Animated.Image
-        source={require('./assets/family-bg.png')}
-        style={{width:'100%',
-        height:'100%', flex:1, justifyContent:"flex-end", opacity:fadeOut}}
-      />
-      <Animated.View style={{width:"100%", opacity:fadeOut}}>
-        <Button title="Sign In" onPress={fadeOutButton}/>
-      </Animated.View>
-      <Animated.View style={{width:'80%', position:'absolute', bottom:riseUp}}>
-        <LogInForm />
-      </Animated.View>
-    </View>
+      { !isReady ? 
+        <><AppLoading
+            startAsync={_loadAssetsAsync}
+            onFinish={() => setIsReady(true)}
+            onError={console.warn}
+          /></>:
+        <>
+        <View style={{...StyleSheet.absoluteFill}}>
+        <Animated.Image
+          source={require('./assets/family-bg.png')}
+          style={{width:null,
+          height:null, flex:1, opacity:fadeOut}}
+        />
+        </View>
+        <Animated.View style={{...styles.animatedViews, opacity:fadeOut, height:height/3, width:width}}>
+          <View style={styles.buttonContaner}>
+            <Button title="Sign In" onPress={fadeOutButton}/>
+          </View>
+        </Animated.View>
+        <Animated.View style={{...styles.animatedViews, bottom:riseUp, width:width}}>
+          <View style={styles.buttonContaner}>
+            <LogInForm />
+          </View>
+        </Animated.View></> }
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent:'flex-end',
+    backgroundColor: '#fff'
   },
+  animatedViews:{ position:'absolute', alignItems:'center'},
+  buttonContaner:{
+    width:'80%'
+  }
 });
