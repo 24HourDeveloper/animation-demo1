@@ -46,12 +46,12 @@ export default function App() {
     Animated.parallel([
       Animated.timing(fadeOut,{
         toValue:0,
-        duration:800
+        duration:500
       }).start(),
 
       Animated.timing(buttonFade,{
         toValue:0,
-        duration:800
+        duration:500
       }).start(),
 
       Animated.spring(riseUp, {
