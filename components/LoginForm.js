@@ -1,14 +1,15 @@
 import React from 'react'
-import {View, Button, TextInput, StyleSheet} from 'react-native';
+import {View, TextInput, StyleSheet} from 'react-native';
+
+import Button from './Button'
 
 export default function LoginForm() {
     return (
         <>
-            <TextInput style={styles.inputStyles} placeholder='Enter Email'/>
-            <TextInput style={styles.inputStyles} placeholder='Enter Password'/>
-            <View style={{paddingVertical:10}}/>
-            <Button title="Login" />
-            <View style={{paddingVertical:5}}/>
+            <TextInput style={styles.inputStyles} placeholder={`${'Enter Email'.toLocaleUpperCase()}`}/>
+            <TextInput style={styles.inputStyles} placeholder={`${'Enter Password'.toLocaleUpperCase()}`}/>
+                <View style={{paddingVertical:15}}/>
+            <Button title="Log in" />
             <Button title="FaceBook"/>
         </>
     )
@@ -16,13 +17,14 @@ export default function LoginForm() {
 
 const styles = StyleSheet.create({
     inputStyles:{
-        backgroundColor:'#eee',
+        backgroundColor:'#fff',
         padding:10,
         borderRadius:5,
         marginVertical:5,
         shadowOffset:{  width: 10,  height: 10,  },
         shadowColor: 'black',
         shadowOpacity: 1.0,
-        elevation:3
+        elevation:3,
+        fontSize:18
     }
 })
